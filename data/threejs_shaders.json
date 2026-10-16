@@ -1,0 +1,42 @@
+[
+  {
+    "prompt": "Como criar uma cena básica com um cubo rotativo em Three.js?",
+    "completion": "import * as THREE from 'three';\n\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\nconst renderer = new THREE.WebGLRenderer({ antialias: true });\nrenderer.setSize(window.innerWidth, window.innerHeight);\ndocument.body.appendChild(renderer.domElement);\n\nconst geometry = new THREE.BoxGeometry(1, 1, 1);\nconst material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });\nconst cube = new THREE.Mesh(geometry, material);\nscene.add(cube);\n\ncamera.position.z = 5;\n\nfunction animate() {\n  requestAnimationFrame(animate);\n  cube.rotation.x += 0.01;\n  cube.rotation.y += 0.01;\n  renderer.render(scene, camera);\n}\nanimate();"
+  },
+  {
+    "prompt": "Como criar uma esfera com iluminação suave usando MeshStandardMaterial?",
+    "completion": "import * as THREE from 'three';\n\nconst scene = new THREE.Scene();\nconst camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\nconst renderer = new THREE.WebGLRenderer({ antialias: true });\nrenderer.setSize(window.innerWidth, window.innerHeight);\ndocument.body.appendChild(renderer.domElement);\n\nconst geometry = new THREE.SphereGeometry(1, 32, 32);\nconst material = new THREE.MeshStandardMaterial({ color: 0x3498db, roughness: 0.3, metalness: 0.1 });\nconst sphere = new THREE.Mesh(geometry, material);\nscene.add(sphere);\n\nconst ambientLight = new THREE.AmbientLight(0xffffff, 0.6);\nscene.add(ambientLight);\n\nconst dirLight = new THREE.DirectionalLight(0xffffff, 1.2);\ndirLight.position.set(5, 5, 5);\nscene.add(dirLight);\n\ncamera.position.z = 4;\nrenderer.render(scene, camera);"
+  },
+  {
+    "prompt": "Crie um ShaderMaterial com um gradiente vertical no fragment shader.",
+    "completion": "import * as THREE from 'three';\n\nconst vertexShader = `\n  varying vec2 vUv;\n  void main() {\n    vUv = uv;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  }\n`;\n\nconst fragmentShader = `\n  varying vec2 vUv;\n  uniform vec3 colorA;\n  uniform vec3 colorB;\n  void main() {\n    vec3 col = mix(colorA, colorB, vUv.y);\n    gl_FragColor = vec4(col, 1.0);\n  }\n`;\n\nconst material = new THREE.ShaderMaterial({\n  vertexShader,\n  fragmentShader,\n  uniforms: {\n    colorA: { value: new THREE.Color(0xff0000) },\n    colorB: { value: new THREE.Color(0x0000ff) }\n  }\n});\n\nconst mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);"
+  },
+  {
+    "prompt": "Como fazer um shader de ondulação senoidal animado com uniform uTime em Three.js?",
+    "completion": "import * as THREE from 'three';\n\nconst vertexShader = `\n  uniform float uTime;\n  varying vec2 vUv;\n  void main() {\n    vUv = uv;\n    vec3 pos = position;\n    pos.z += sin(pos.x * 5.0 + uTime) * 0.2;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);\n  }\n`;\n\nconst fragmentShader = `\n  varying vec2 vUv;\n  void main() {\n    gl_FragColor = vec4(vUv.x, vUv.y, 1.0, 1.0);\n  }\n`;\n\nconst material = new THREE.ShaderMaterial({\n  vertexShader,\n  fragmentShader,\n  uniforms: {\n    uTime: { value: 0 }\n  },\n  wireframe: true\n});\n\nconst plane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4, 32, 32), material);\n// Atualizar na render loop: material.uniforms.uTime.value = clock.getElapsedTime();"
+  },
+  {
+    "prompt": "Como criar um efeito de Fresnel básico num fragment shader GLSL?",
+    "completion": "import * as THREE from 'three';\n\nconst vertexShader = `\n  varying vec3 vNormal;\n  varying vec3 vPositionNormal;\n  void main() {\n    vNormal = normalize(normalMatrix * normal);\n    vPositionNormal = normalize((modelViewMatrix * vec4(position, 1.0)).xyz);\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  }\n`;\n\nconst fragmentShader = `\n  varying vec3 vNormal;\n  varying vec3 vPositionNormal;\n  void main() {\n    float fresnel = dot(vNormal, -vPositionNormal);\n    fresnel = clamp(1.0 - fresnel, 0.0, 1.0);\n    fresnel = pow(fresnel, 3.0);\n    gl_FragColor = vec4(vec3(fresnel), 1.0);\n  }\n`;\n\nconst material = new THREE.ShaderMaterial({ vertexShader, fragmentShader });"
+  },
+  {
+    "prompt": "Como configurar sombras suaves (PCFSoftShadowMap) numa cena Three.js?",
+    "completion": "import * as THREE from 'three';\n\nconst renderer = new THREE.WebGLRenderer({ antialias: true });\nrenderer.shadowMap.enabled = true;\nrenderer.shadowMap.type = THREE.PCFSoftShadowMap;\n\nconst light = new THREE.DirectionalLight(0xffffff, 1.5);\nlight.position.set(5, 10, 5);\nlight.castShadow = true;\nlight.shadow.mapSize.width = 2048;\nlight.shadow.mapSize.height = 2048;\n\nconst floor = new THREE.Mesh(\n  new THREE.PlaneGeometry(20, 20),\n  new THREE.MeshStandardMaterial({ color: 0x808080 })\n);\nfloor.rotation.x = -Math.PI / 2;\nfloor.receiveShadow = true;\n\nconst box = new THREE.Mesh(\n  new THREE.BoxGeometry(1, 1, 1),\n  new THREE.MeshStandardMaterial({ color: 0xff0000 })\n);\nbox.position.y = 1;\nbox.castShadow = true;"
+  },
+  {
+    "prompt": "Como instanciar milhares de malhas de alto desempenho usando InstancedMesh?",
+    "completion": "import * as THREE from 'three';\n\nconst count = 5000;\nconst geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);\nconst material = new THREE.MeshNormalMaterial();\nconst instancedMesh = new THREE.InstancedMesh(geometry, material, count);\n\nconst dummy = new THREE.Object3D();\nfor (let i = 0; i < count; i++) {\n  dummy.position.set(\n    (Math.random() - 0.5) * 20,\n    (Math.random() - 0.5) * 20,\n    (Math.random() - 0.5) * 20\n  );\n  dummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);\n  dummy.updateMatrix();\n  instancedMesh.setMatrixAt(i, dummy.matrix);\n}\ninstancedMesh.instanceMatrix.needsUpdate = true;"
+  },
+  {
+    "prompt": "Como carregar um modelo GLTF/GLB com DRACOLoader em Three.js?",
+    "completion": "import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';\nimport { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';\n\nconst dracoLoader = new DRACOLoader();\ndracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');\n\nconst loader = new GLTFLoader();\nloader.setDRACOLoader(dracoLoader);\n\nloader.load('model.glb', (gltf) => {\n  scene.add(gltf.scene);\n}, undefined, (error) => {\n  console.error('Erro ao carregar GLTF:', error);\n});"
+  },
+  {
+    "prompt": "Como aplicar um Shader de pós-processamento usando EffectComposer?",
+    "completion": "import * as THREE from 'three';\nimport { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';\nimport { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';\nimport { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';\nimport { LuminosityShader } from 'three/examples/jsm/shaders/LuminosityShader.js';\n\nconst composer = new EffectComposer(renderer);\ncomposer.addPass(new RenderPass(scene, camera));\n\nconst grayPass = new ShaderPass(LuminosityShader);\ncomposer.addPass(grayPass);\n\nfunction animate() {\n  requestAnimationFrame(animate);\n  composer.render();\n}"
+  },
+  {
+    "prompt": "Como passar texturas como uniform para um ShaderMaterial?",
+    "completion": "import * as THREE from 'three';\n\nconst texture = new THREE.TextureLoader().load('texture.jpg');\nconst material = new THREE.ShaderMaterial({\n  uniforms: {\n    uTexture: { value: texture }\n  },\n  vertexShader: `\n    varying vec2 vUv;\n    void main() {\n      vUv = uv;\n      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n    }\n  `,\n  fragmentShader: `\n    uniform sampler2D uTexture;\n    varying vec2 vUv;\n    void main() {\n      vec4 tex = texture2D(uTexture, vUv);\n      gl_FragColor = tex;\n    }\n  `\n});"
+  }
+]

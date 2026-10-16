@@ -1,0 +1,9 @@
+{
+  "threejs_shaders": {
+    "file_name": "threejs_shaders.json",
+    "columns": {
+      "prompt": "prompt",
+      "response": "completion"
+    }
+  }
+}

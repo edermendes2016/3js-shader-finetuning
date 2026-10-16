@@ -218,3 +218,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+#Snippet de código
+saves/
+output/
+models/
+*.pt
+*.bin
+*.safetensors
